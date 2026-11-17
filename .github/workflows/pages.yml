@@ -35,10 +35,12 @@ jobs:
           cp index.html app.js style.css texte.json _site/
           cp -R Fotos _site/Fotos
           npm install --prefix "$HEIC_CONVERTER_ROOT" --no-save --no-package-lock heic-convert@2.1.0
-          node <<'NODE'
-          const fs = require('node:fs');
-          const path = require('node:path');
-          const convert = require(path.join(process.env.HEIC_CONVERTER_ROOT, 'node_modules', 'heic-convert'));
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import { createRequire } from 'node:module';
+          const require = createRequire(path.join(process.env.HEIC_CONVERTER_ROOT, 'prepare.mjs'));
+          const convert = require('heic-convert');
           const photoDir = path.join('_site', 'Fotos');
           const listPath = path.join(photoDir, 'fotos.json');
 
@@ -65,10 +67,14 @@ jobs:
             fs.writeFileSync(listPath, `${JSON.stringify(publishedNames, null, 2)}\n`);
           }
 
-          preparePhotos().catch((error) => {
-            console.error(error);
-            process.exitCode = 1;
-          });
+          await preparePhotos();
+          const publishedNames = JSON.parse(fs.readFileSync(listPath, 'utf8'));
+          for (const name of publishedNames) {
+            if (!fs.existsSync(path.join(photoDir, name))) {
+              throw new Error(`Published photo missing: ${name}`);
+            }
+          }
+          console.log(`Prepared ${publishedNames.length} browser-compatible photos.`);
           NODE
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
