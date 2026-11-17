@@ -17,7 +17,22 @@ async function loadList(file) {
 }
 
 messages = await loadList('texte.json');
-photos = await loadList('Fotos/fotos.json');
+const listedPhotos = await loadList('Fotos/fotos.json');
+
+async function imageIsAvailable(filename) {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => resolve(true);
+    image.onerror = () => resolve(false);
+    image.src = `Fotos/${encodeURIComponent(filename)}`;
+  });
+}
+
+const photoChecks = await Promise.all(
+  listedPhotos.map(async (filename) => ({ filename, available: await imageIsAvailable(filename) }))
+);
+photos = photoChecks.filter((photo) => photo.available).map((photo) => photo.filename);
+const missingPhotos = photoChecks.filter((photo) => !photo.available).map((photo) => photo.filename);
 
 document.querySelector('#love-button').addEventListener('click', () => {
   if (!messages.length) {
@@ -35,14 +50,16 @@ document.querySelector('#love-button').addEventListener('click', () => {
 document.querySelector('#kiss-button').addEventListener('click', async () => {
   playKiss();
   if (!photos.length) {
-    statusElement.textContent = 'Lege Fotos in den Ordner Fotos und ergänze Fotos/fotos.json.';
+    statusElement.textContent = 'Lege mindestens ein Bild in den Ordner Fotos und trage den Dateinamen in Fotos/fotos.json ein.';
     return;
   }
   photoIndex = (photoIndex + 1) % photos.length;
   const photo = `url("${encodeURI(`Fotos/${photos[photoIndex]}`)}")`;
   document.body.style.setProperty('--photo', photo);
   document.body.classList.add('has-photo');
-  statusElement.textContent = '';
+  statusElement.textContent = missingPhotos.length
+    ? `Nicht gefunden im Ordner Fotos: ${missingPhotos.join(', ')}`
+    : '';
 });
 
 function playKiss() {
