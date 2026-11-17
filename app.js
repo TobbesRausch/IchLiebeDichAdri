@@ -8,7 +8,7 @@ let photoIndex = -1;
 
 async function loadList(file) {
   try {
-    const response = await fetch(`${file}?v=photos-fit-2`, { cache: 'no-cache' });
+    const response = await fetch(`${file}?v=photo-list-2`, { cache: 'no-cache' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return await response.json();
   } catch (error) {
