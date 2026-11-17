@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap');
+
+:root { color-scheme: light; font-family: 'DM Sans', sans-serif; color: #402d32; background: #f8e9e8; }
+* { box-sizing: border-box; }
+body {
+  min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px;
+  background: linear-gradient(135deg, rgba(69, 36, 49, .38), rgba(69, 36, 49, .12)), url('Fotos/hintergrund.svg') center / cover fixed;
+  transition: background-image .5s ease;
+}
+body.has-photo { background-image: linear-gradient(135deg, rgba(69, 36, 49, .42), rgba(69, 36, 49, .16)), var(--photo); }
+.card { width: min(100%, 560px); padding: clamp(32px, 7vw, 64px); text-align: center; border: 1px solid rgba(255,255,255,.7); border-radius: 28px; background: rgba(255, 250, 249, .91); box-shadow: 0 24px 80px rgba(53, 25, 37, .22); backdrop-filter: blur(12px); }
+.eyebrow { margin: 0 0 12px; color: #a45a68; text-transform: uppercase; letter-spacing: .18em; font-size: .75rem; font-weight: 700; }
+h1 { margin: 0; font: 600 clamp(2.4rem, 9vw, 4rem)/1.1 'Playfair Display', Georgia, serif; }
+h1 span { color: #c35f73; }
+.message { min-height: 4.2em; display: grid; place-items: center; margin: 28px 0 32px; font: 500 clamp(1.25rem, 4.5vw, 1.7rem)/1.45 'Playfair Display', Georgia, serif; }
+.buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+button { min-height: 50px; padding: 0 22px; border: 0; border-radius: 999px; font: 700 1rem 'DM Sans', sans-serif; cursor: pointer; transition: transform .18s, box-shadow .18s; }
+button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(125, 53, 72, .2); }
+button:focus-visible { outline: 3px solid #6c3043; outline-offset: 3px; }
+.primary { background: #a94e64; color: white; }
+.secondary { background: #f4d9dc; color: #713b4a; }
+.status { min-height: 1.4em; margin: 20px 0 0; color: #8c5b65; font-size: .85rem; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
