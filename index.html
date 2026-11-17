@@ -5,18 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8e9e8">
   <title>Für Adri</title>
-  <link rel="stylesheet" href="style.css?v=photos-fit-3">
+  <link rel="stylesheet" href="style.css?v=split-layout-1">
 </head>
 <body>
-  <main class="card" aria-live="polite">
-    <h1>Für Adri <span aria-hidden="true">♡</span></h1>
-    <p id="message" class="message">Drück den Knopf und finde heraus, warum ich Dich liebe.</p>
-    <div class="buttons">
-      <button id="love-button" class="primary" type="button">Ich liebe Dich, Adri</button>
-      <button id="kiss-button" class="secondary" type="button">Besito <span aria-hidden="true">💋</span></button>
-    </div>
-    <p id="status" class="status" aria-live="polite"></p>
+  <main class="layout">
+    <section class="card" aria-label="Für Adri">
+      <h1>Für Adri <span aria-hidden="true">♡</span></h1>
+      <p id="message" class="message" aria-live="polite">Drück den Knopf und finde heraus, warum ich Dich liebe.</p>
+      <div class="buttons">
+        <button id="love-button" class="primary" type="button">Ich liebe Dich, Adri</button>
+        <button id="kiss-button" class="secondary" type="button">Besito <span aria-hidden="true">💋</span></button>
+      </div>
+      <p id="status" class="status" aria-live="polite"></p>
+    </section>
+    <figure class="photo-panel">
+      <img id="photo-image" alt="Hochzeitsfoto">
+    </figure>
   </main>
-  <script type="module" src="app.js?v=photos-fit-2"></script>
+  <script type="module" src="app.js?v=split-layout-1"></script>
 </body>
 </html>

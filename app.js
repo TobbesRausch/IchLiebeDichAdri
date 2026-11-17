@@ -1,5 +1,6 @@
 const messageElement = document.querySelector('#message');
 const statusElement = document.querySelector('#status');
+const photoElement = document.querySelector('#photo-image');
 let messages = [];
 let messageIndex = -1;
 let photos = [];
@@ -34,6 +35,14 @@ const photoChecks = await Promise.all(
 photos = photoChecks.filter((photo) => photo.available).map((photo) => photo.filename);
 const missingPhotos = photoChecks.filter((photo) => !photo.available).map((photo) => photo.filename);
 
+function showPhoto(index) {
+  photoIndex = index;
+  photoElement.src = `Fotos/${encodeURIComponent(photos[photoIndex])}`;
+  photoElement.alt = `Hochzeitsfoto ${photoIndex + 1}`;
+}
+
+if (photos.length) showPhoto(0);
+
 document.querySelector('#love-button').addEventListener('click', () => {
   if (!messages.length) {
     messageElement.textContent = 'Füge Deine Gründe in texte.json hinzu.';
@@ -53,10 +62,7 @@ document.querySelector('#kiss-button').addEventListener('click', async () => {
     statusElement.textContent = 'Lege mindestens ein Bild in den Ordner Fotos und trage den Dateinamen in Fotos/fotos.json ein.';
     return;
   }
-  photoIndex = (photoIndex + 1) % photos.length;
-  const photo = `url("${encodeURI(`Fotos/${photos[photoIndex]}`)}")`;
-  document.body.style.setProperty('--photo', photo);
-  document.body.classList.add('has-photo');
+  showPhoto((photoIndex + 1) % photos.length);
   statusElement.textContent = missingPhotos.length
     ? `Nicht gefunden im Ordner Fotos: ${missingPhotos.join(', ')}`
     : '';
