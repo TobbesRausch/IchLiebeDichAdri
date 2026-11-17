@@ -14,7 +14,7 @@ body.has-photo {
   background-repeat: no-repeat;
   background-color: #f8e9e8;
 }
-.card { width: min(100%, 560px); padding: clamp(32px, 7vw, 64px); text-align: center; border: 1px solid rgba(255,255,255,.7); border-radius: 28px; background: rgba(255, 250, 249, .91); box-shadow: 0 24px 80px rgba(53, 25, 37, .22); backdrop-filter: blur(12px); }
+.card { width: min(100%, 560px); padding: clamp(32px, 7vw, 64px); text-align: center; border: 1px solid rgba(255,255,255,.7); border-radius: 28px; background: rgba(255, 250, 249, .76); box-shadow: 0 24px 80px rgba(53, 25, 37, .22); backdrop-filter: blur(6px); }
 h1 { margin: 0; font: 600 clamp(2.4rem, 9vw, 4rem)/1.1 'Playfair Display', Georgia, serif; }
 h1 span { color: #c35f73; }
 .message { min-height: 4.2em; display: grid; place-items: center; margin: 28px 0 32px; font: 500 clamp(1.25rem, 4.5vw, 1.7rem)/1.45 'Playfair Display', Georgia, serif; }
