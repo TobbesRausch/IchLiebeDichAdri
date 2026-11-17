@@ -28,18 +28,48 @@ jobs:
         with:
           enablement: true
       - name: Prepare static site and convert HEIC photos
+        env:
+          HEIC_CONVERTER_ROOT: ${{ runner.temp }}/heic-converter
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libheif-examples
           mkdir -p _site
           cp index.html app.js style.css texte.json _site/
           cp -R Fotos _site/Fotos
-          for source in _site/Fotos/*.HEIC; do
-            [ -f "$source" ] || continue
-            heif-convert "$source" "${source%.HEIC}.jpg"
-          done
-          jq 'map(if endswith(".HEIC") then .[:-5] + ".jpg" else . end)' _site/Fotos/fotos.json > _site/Fotos/fotos.tmp
-          mv _site/Fotos/fotos.tmp _site/Fotos/fotos.json
+          npm install --prefix "$HEIC_CONVERTER_ROOT" --no-save --no-package-lock heic-convert@2.1.0
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const convert = require(path.join(process.env.HEIC_CONVERTER_ROOT, 'node_modules', 'heic-convert'));
+          const photoDir = path.join('_site', 'Fotos');
+          const listPath = path.join(photoDir, 'fotos.json');
+
+          async function preparePhotos() {
+            const sourceNames = JSON.parse(fs.readFileSync(listPath, 'utf8'));
+            const publishedNames = [];
+
+            for (const name of sourceNames) {
+              if (!/\.HEIC$/i.test(name)) {
+                publishedNames.push(name);
+                continue;
+              }
+
+              const outputName = name.replace(/\.HEIC$/i, '.jpg');
+              const output = await convert({
+                buffer: fs.readFileSync(path.join(photoDir, name)),
+                format: 'JPEG',
+                quality: 0.9,
+              });
+              fs.writeFileSync(path.join(photoDir, outputName), output);
+              publishedNames.push(outputName);
+            }
+
+            fs.writeFileSync(listPath, `${JSON.stringify(publishedNames, null, 2)}\n`);
+          }
+
+          preparePhotos().catch((error) => {
+            console.error(error);
+            process.exitCode = 1;
+          });
+          NODE
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
