@@ -27,10 +27,23 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Prepare static site and convert HEIC photos
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libheif-examples
+          mkdir -p _site
+          cp index.html app.js style.css texte.json _site/
+          cp -R Fotos _site/Fotos
+          for source in _site/Fotos/*.HEIC; do
+            [ -f "$source" ] || continue
+            heif-convert "$source" "${source%.HEIC}.jpg"
+          done
+          jq 'map(if endswith(".HEIC") then .[:-5] + ".jpg" else . end)' _site/Fotos/fotos.json > _site/Fotos/fotos.tmp
+          mv _site/Fotos/fotos.tmp _site/Fotos/fotos.json
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
