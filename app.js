@@ -3,13 +3,23 @@ const statusElement = document.querySelector('#status');
 const photoElement = document.querySelector('#photo-image');
 let messages = [];
 let photos = [];
+let messageQueue = [];
+let photoQueue = [];
 let lastMessage = '';
 let currentPhoto = '';
 let messageAnimation = 0;
 
-function randomItem(items, previous = '') {
-  const choices = items.length > 1 ? items.filter((item) => item !== previous) : items;
-  return choices[Math.floor(Math.random() * choices.length)];
+function shuffle(items, previous = '') {
+  const shuffled = [...items];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  if (shuffled.length > 1 && shuffled[0] === previous) {
+    const differentItem = shuffled.findIndex((item, index) => index > 0 && item !== previous);
+    if (differentItem !== -1) [shuffled[0], shuffled[differentItem]] = [shuffled[differentItem], shuffled[0]];
+  }
+  return shuffled;
 }
 
 function showMessage(text) {
@@ -82,7 +92,8 @@ photos = photoChecks.filter((photo) => photo.available).map((photo) => photo.fil
 const missingPhotos = photoChecks.filter((photo) => !photo.available).map((photo) => photo.filename);
 
 function showRandomPhoto() {
-  currentPhoto = randomItem(photos, currentPhoto);
+  if (!photoQueue.length) photoQueue = shuffle(photos, currentPhoto);
+  currentPhoto = photoQueue.pop();
   photoElement.src = `Fotos/${encodeURIComponent(currentPhoto)}`;
   photoElement.alt = 'Hochzeitsfoto';
 }
@@ -94,7 +105,8 @@ document.querySelector('#love-button').addEventListener('click', () => {
     showMessage('Füge Deine Gründe in texte.json hinzu.');
     return;
   }
-  lastMessage = randomItem(messages, lastMessage);
+  if (!messageQueue.length) messageQueue = shuffle(messages, lastMessage);
+  lastMessage = messageQueue.pop();
   showMessage(lastMessage);
 });
 
