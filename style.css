@@ -18,6 +18,8 @@ body {
 h1 { margin: 0; font: 600 clamp(2.4rem, 9vw, 4rem)/1.1 'Playfair Display', Georgia, serif; }
 h1 span { color: #c35f73; }
 .message { min-height: 4.2em; display: grid; place-items: center; margin: 28px 0 32px; font: 500 clamp(1.25rem, 4.5vw, 1.7rem)/1.45 'Playfair Display', Georgia, serif; }
+.message--leaving { animation: message-dissolve .32s ease-in forwards; }
+.message--entering .message__letter { display: inline-block; animation: letter-drop .72s cubic-bezier(.2, .8, .25, 1.2) both; animation-delay: calc(var(--letter-index) * 28ms); }
 .buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
 button { min-height: 50px; padding: 0 22px; border: 0; border-radius: 999px; font: 700 1rem 'DM Sans', sans-serif; cursor: pointer; transition: transform .18s, box-shadow .18s; }
 button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(125, 53, 72, .2); }
@@ -27,10 +29,19 @@ button:focus-visible { outline: 3px solid #6c3043; outline-offset: 3px; }
 .status { min-height: 1.4em; margin: 20px 0 0; color: #8c5b65; font-size: .85rem; }
 .photo-panel img { animation: appear .25s ease-out; }
 @keyframes appear { from { opacity: .55; } to { opacity: 1; } }
+@keyframes message-dissolve { to { opacity: 0; filter: blur(5px); transform: translateY(-8px); } }
+@keyframes letter-drop {
+  0% { opacity: 0; transform: translateY(-1.2em) scale(.96); }
+  68% { opacity: 1; transform: translateY(.14em) scale(1.02); }
+  84% { transform: translateY(-.08em) scale(1); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
 @media (max-width: 760px) {
   body { padding: 14px; }
   .layout { grid-template-columns: 1fr; width: min(560px, 100%); height: auto; min-height: 0; border-radius: 24px; }
   .card { min-height: min(52vh, 390px); padding: 30px 24px; }
   .photo-panel { height: min(72vh, 620px); min-height: 320px; }
 }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }
+}

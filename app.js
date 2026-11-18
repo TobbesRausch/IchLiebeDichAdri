@@ -2,9 +2,41 @@ const messageElement = document.querySelector('#message');
 const statusElement = document.querySelector('#status');
 const photoElement = document.querySelector('#photo-image');
 let messages = [];
-let messageIndex = -1;
 let photos = [];
-let photoIndex = -1;
+let lastMessage = '';
+let currentPhoto = '';
+let messageAnimation = 0;
+
+function randomItem(items, previous = '') {
+  const choices = items.length > 1 ? items.filter((item) => item !== previous) : items;
+  return choices[Math.floor(Math.random() * choices.length)];
+}
+
+function showMessage(text) {
+  const animation = ++messageAnimation;
+  messageElement.classList.add('message--leaving');
+
+  window.setTimeout(() => {
+    if (animation !== messageAnimation) return;
+
+    messageElement.replaceChildren();
+    messageElement.setAttribute('aria-label', text);
+    [...text].forEach((character, index) => {
+      const letter = document.createElement('span');
+      letter.className = 'message__letter';
+      letter.setAttribute('aria-hidden', 'true');
+      letter.textContent = character === ' ' ? '\u00a0' : character;
+      letter.style.setProperty('--letter-index', index);
+      messageElement.append(letter);
+    });
+
+    messageElement.classList.remove('message--leaving');
+    messageElement.classList.add('message--entering');
+    window.setTimeout(() => {
+      if (animation === messageAnimation) messageElement.classList.remove('message--entering');
+    }, 900);
+  }, 320);
+}
 
 async function loadList(file) {
   try {
@@ -35,25 +67,21 @@ const photoChecks = await Promise.all(
 photos = photoChecks.filter((photo) => photo.available).map((photo) => photo.filename);
 const missingPhotos = photoChecks.filter((photo) => !photo.available).map((photo) => photo.filename);
 
-function showPhoto(index) {
-  photoIndex = index;
-  photoElement.src = `Fotos/${encodeURIComponent(photos[photoIndex])}`;
-  photoElement.alt = `Hochzeitsfoto ${photoIndex + 1}`;
+function showRandomPhoto() {
+  currentPhoto = randomItem(photos, currentPhoto);
+  photoElement.src = `Fotos/${encodeURIComponent(currentPhoto)}`;
+  photoElement.alt = 'Hochzeitsfoto';
 }
 
-if (photos.length) showPhoto(0);
+if (photos.length) showRandomPhoto();
 
 document.querySelector('#love-button').addEventListener('click', () => {
   if (!messages.length) {
-    messageElement.textContent = 'Füge Deine Gründe in texte.json hinzu.';
+    showMessage('Füge Deine Gründe in texte.json hinzu.');
     return;
   }
-  // Show each reason once before starting a new shuffled round.
-  if (messageIndex === -1 || messageIndex >= messages.length - 1) {
-    messages = [...messages].sort(() => Math.random() - 0.5);
-    messageIndex = 0;
-  } else messageIndex += 1;
-  messageElement.textContent = messages[messageIndex];
+  lastMessage = randomItem(messages, lastMessage);
+  showMessage(lastMessage);
 });
 
 document.querySelector('#kiss-button').addEventListener('click', async () => {
@@ -62,7 +90,7 @@ document.querySelector('#kiss-button').addEventListener('click', async () => {
     statusElement.textContent = 'Lege mindestens ein Bild in den Ordner Fotos und trage den Dateinamen in Fotos/fotos.json ein.';
     return;
   }
-  showPhoto((photoIndex + 1) % photos.length);
+  showRandomPhoto();
   statusElement.textContent = missingPhotos.length
     ? `Nicht gefunden im Ordner Fotos: ${missingPhotos.join(', ')}`
     : '';
