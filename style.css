@@ -17,8 +17,8 @@ body {
 .photo-panel img { display: block; width: 100%; height: 100%; object-fit: contain; }
 h1 { margin: 0; font: 600 clamp(2.4rem, 9vw, 4rem)/1.1 'Playfair Display', Georgia, serif; }
 h1 span { color: #c35f73; }
-.message { min-height: 4.2em; display: grid; place-items: center; margin: 28px 0 32px; font: 500 clamp(1.25rem, 4.5vw, 1.7rem)/1.45 'Playfair Display', Georgia, serif; }
-.message__content { display: block; text-align: center; }
+.message { width: 100%; min-height: 4.2em; display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; margin: 28px 0 32px; font: 500 clamp(1.25rem, 4.5vw, 1.7rem)/1.45 'Playfair Display', Georgia, serif; }
+.message__content { display: block; width: 100%; max-width: 100%; text-align: center; text-wrap: balance; }
 .message--leaving { animation: message-dissolve .32s ease-in forwards; }
 .message--entering .message__word { display: inline-block; white-space: nowrap; }
 .message--entering .message__letter { display: inline-block; animation: letter-drop .72s cubic-bezier(.2, .8, .25, 1.2) both; animation-delay: calc(var(--letter-index) * 28ms); }

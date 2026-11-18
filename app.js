@@ -45,15 +45,16 @@ function showMessage(text) {
 
     messageElement.classList.remove('message--leaving');
     messageElement.classList.add('message--entering');
+    const animationDuration = 720 + Math.max(0, letterIndex - 1) * 28;
     window.setTimeout(() => {
       if (animation === messageAnimation) messageElement.classList.remove('message--entering');
-    }, 900);
+    }, animationDuration);
   }, 320);
 }
 
 async function loadList(file) {
   try {
-    const response = await fetch(`${file}?v=heic-jpeg-3`, { cache: 'no-cache' });
+    const response = await fetch(`${file}?v=photos-refresh-1`, { cache: 'no-cache' });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return await response.json();
   } catch (error) {
