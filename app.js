@@ -21,14 +21,27 @@ function showMessage(text) {
 
     messageElement.replaceChildren();
     messageElement.setAttribute('aria-label', text);
-    [...text].forEach((character, index) => {
-      const letter = document.createElement('span');
-      letter.className = 'message__letter';
-      letter.setAttribute('aria-hidden', 'true');
-      letter.textContent = character === ' ' ? '\u00a0' : character;
-      letter.style.setProperty('--letter-index', index);
-      messageElement.append(letter);
+    const content = document.createElement('span');
+    content.className = 'message__content';
+    content.setAttribute('aria-hidden', 'true');
+    let letterIndex = 0;
+    text.split(/(\s+)/u).forEach((part) => {
+      if (/^\s+$/u.test(part)) {
+        content.append(document.createTextNode(part));
+        return;
+      }
+      const word = document.createElement('span');
+      word.className = 'message__word';
+      [...part].forEach((character) => {
+        const letter = document.createElement('span');
+        letter.className = 'message__letter';
+        letter.textContent = character;
+        letter.style.setProperty('--letter-index', letterIndex++);
+        word.append(letter);
+      });
+      content.append(word);
     });
+    messageElement.append(content);
 
     messageElement.classList.remove('message--leaving');
     messageElement.classList.add('message--entering');
